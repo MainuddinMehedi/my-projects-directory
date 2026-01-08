@@ -6,7 +6,7 @@
 - Complete the projectCard
 - Make a footer.
 - Make a Not found page.
--
+- Add a property - projectType - in project - case study, project, learn - to be used in projectCard footer.
 
 # TASKS - NEXT SESSION OR THIS SESSION
 
@@ -33,6 +33,12 @@ Right now the latest projects fetch result is showing empty for some reason. deb
 
 You can make a footer which shows the github contribution heatmap
 Or any other analytical showoff able widget.
+
+---
+
+Delete thumbnail as a separate image. Make the first image of the gallery the thumbnail
+When you take the input for image a let user upload multiple file in a input box and reorder them. So it becomes easier.
+The first image will be used as the thumbnail will be shown as a message there.
 
 ---
 
