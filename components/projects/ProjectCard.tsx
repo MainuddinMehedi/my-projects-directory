@@ -10,10 +10,44 @@ import {
 import { Badge } from "../ui/badge";
 import Link from "next/link";
 import BadgeDrawer from "../BadgeDrawer";
+import { cn } from "@/lib/utils";
 
-export default function ProjectCard({ project }: { project: any }) {
+// TODO: project will have type. it will be shown in place of case study. projects may have types like - case study, project, learning, fun
+
+interface Technology {
+  _id: string;
+  name: string;
+  icon?: string;
+}
+
+interface ProjectProps {
+  project: {
+    name: string;
+    slug: string;
+    description: string;
+    thumbnail?: string;
+    technologies: Technology[];
+    devPhase?: {
+      status?: string;
+      startDate?: string;
+      endDate?: string;
+    };
+  };
+}
+
+export default function ProjectCard({
+  project,
+  isNew,
+}: ProjectProps & { isNew: boolean }) {
   return (
-    <Card className="group transition-all duration-300 hover:-translate-y-1 outline-none">
+    <Card
+      className={cn(
+        "group transition-all duration-300 hover:-translate-y-1 outline-none",
+        isNew
+          ? "border-primary ring-2 ring-primary/50 shadow-primary/20 animate-pulse"
+          : "border-muted/50",
+      )}
+    >
       {/* Project thumbnail */}
       <Link href={`/projects/${project.slug}`}>
         <div className="w-full h-56 bg-muted/50 relative overflow-hidden flex items-center justify-center group-hover:bg-muted/70 transition-colors">

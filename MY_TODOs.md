@@ -1,19 +1,20 @@
 # TODO'S
 
+[-] Render the latest projects.
+[-] Complete the projectCard
+
 - revisit the models. Fix them.
 - Write the core types. Means - types for all the collections.
-- Render the latest projects.
-- Complete the projectCard
 - Make a footer.
 - Make a Not found page.
-- Add a property - projectType - in project - case study, project, learn - to be used in projectCard footer.
+- Add a property - **projectType** - in project - **case study**, **project**, **learn** - to be used in projectCard footer.
 
 # TASKS - NEXT SESSION OR THIS SESSION
 
 Then later that session
 
 - Render all the project.
-  - create projects route
+  [-] create projects route
   - write required types for this.
 -
 

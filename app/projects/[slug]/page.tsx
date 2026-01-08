@@ -10,6 +10,8 @@ import ProjectActions from "@/components/projects/ProjectActions";
 // import { MarkdownPreview } from "@/components/ui/markdown-preview";
 // import { ProjectActions } from "@/components/projects/ProjectActions";
 
+// TODO: Work on the markdown-preview
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
