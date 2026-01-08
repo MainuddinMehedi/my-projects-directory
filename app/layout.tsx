@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Dosis, Geist, Geist_Mono } from "next/font/google";
+import { Dosis } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import FloatingButtons from "@/components/FloatingButtons";
+import { Toaster } from "sonner";
 
 const dosis = Dosis({
   variable: "--font-dosis",
@@ -26,6 +27,7 @@ export default function RootLayout({
           <div className="w-full max-sm:px-4 sm:max-w-[80%] mx-auto">
             {children}
             <FloatingButtons />
+            <Toaster />
           </div>
         </ThemeProvider>
       </body>

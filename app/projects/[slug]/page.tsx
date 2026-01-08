@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import BadgeDrawer from "@/components/BadgeDrawer";
 import { getProjectBySlug } from "@/queries/project";
 import Image from "next/image";
+import ProjectActions from "@/components/projects/ProjectActions";
 // import { MarkdownPreview } from "@/components/ui/markdown-preview";
 // import { ProjectActions } from "@/components/projects/ProjectActions";
 
@@ -73,10 +74,10 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
                 </a>
               </Button>
             )}
-            {/* <ProjectActions */}
-            {/*   projectId={project._id.toString()} */}
-            {/*   projectSlug={project.slug} */}
-            {/* /> */}
+            <ProjectActions
+              projectId={project._id.toString()}
+              projectSlug={project.slug}
+            />
           </div>
         </div>
       </div>

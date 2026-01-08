@@ -15,22 +15,22 @@ export default function ProjectCard({ project }: { project: any }) {
   return (
     <Card className="group transition-all duration-300 hover:-translate-y-1 outline-none">
       {/* Project thumbnail */}
-      <div className="w-full h-56 bg-muted/50 relative overflow-hidden flex items-center justify-center group-hover:bg-muted/70 transition-colors">
-        {project.thumbnail ? (
-          <Link href={`/projects/${project.slug}`}>
+      <Link href={`/projects/${project.slug}`}>
+        <div className="w-full h-56 bg-muted/50 relative overflow-hidden flex items-center justify-center group-hover:bg-muted/70 transition-colors">
+          {project.thumbnail ? (
             <Image
               src={project.thumbnail}
               alt={project.name}
               fill
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
-          </Link>
-        ) : (
-          <div className="flex flex-col items-center justify-center text-muted-foreground/50 gap-2">
-            <ImageIcon className="w-12 h-12" />
-          </div>
-        )}
-      </div>
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/50 gap-2">
+              <ImageIcon className="w-12 h-12" />
+            </div>
+          )}
+        </div>
+      </Link>
 
       <CardHeader>
         <div className="flex justify-between items-start gap-4">
