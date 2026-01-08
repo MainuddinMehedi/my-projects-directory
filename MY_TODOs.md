@@ -2,6 +2,10 @@
 
 [-] Render the latest projects.
 [-] Complete the projectCard
+[-] Render all the project.
+[-] create projects route
+
+- write required types for this.
 
 - revisit the models. Fix them.
 - Write the core types. Means - types for all the collections.
@@ -10,13 +14,6 @@
 - Add a property - **projectType** - in project - **case study**, **project**, **learn** - to be used in projectCard footer.
 
 # TASKS - NEXT SESSION OR THIS SESSION
-
-Then later that session
-
-- Render all the project.
-  [-] create projects route
-  - write required types for this.
--
 
 # TASKS - SESSION AFTER
 
@@ -28,15 +25,15 @@ For now stop this later comeback and fix the models analyze what you need and yo
 and then write the types accordingly.
 don't write it all right away. write them when you need them.
 
-Right now the latest projects fetch result is showing empty for some reason. debug this.
-
 ---
 
+**contribution heatmap widget**
 You can make a footer which shows the github contribution heatmap
 Or any other analytical showoff able widget.
 
 ---
 
+**thumbnail and images**
 Delete thumbnail as a separate image. Make the first image of the gallery the thumbnail
 When you take the input for image a let user upload multiple file in a input box and reorder them. So it becomes easier.
 The first image will be used as the thumbnail will be shown as a message there.
