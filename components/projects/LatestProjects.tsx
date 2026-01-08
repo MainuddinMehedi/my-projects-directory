@@ -1,11 +1,11 @@
-import { getFeaturedProjects } from "@/queries/project";
+import { getAllProjects, getFeaturedProjects } from "@/queries/project";
 import Link from "next/link";
 import ProjectCard from "./ProjectCard";
 
 export default async function LatestProjects() {
   const projects = await getFeaturedProjects(6);
 
-  console.log("projects from leatestProject componenet: ", projects)
+  // console.log("projects from leatestProject componenet: ", projects);
 
   return (
     <div>
