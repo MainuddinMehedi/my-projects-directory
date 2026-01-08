@@ -13,4 +13,3 @@ There is a timeline page which will show the timeline of the proejcts in a year 
 
 # What's coming 
 - Contribution heatmap
-- 

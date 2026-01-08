@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import "@/models";
 
 declare global {
   var mongoose: any;

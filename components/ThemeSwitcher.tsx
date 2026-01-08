@@ -15,7 +15,7 @@ export default function ThemeSwitcher() {
 
   if (!mounted) return null;
 
-  const currentTheme = theme === "system" ? (systemTheme ?? "light") : theme;
+  const currentTheme = theme === "system" ? systemTheme ?? "light" : theme;
   const isDark = currentTheme === "dark";
 
   const toggleTheme = () => {
