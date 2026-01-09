@@ -4,14 +4,15 @@
 [-] Complete the projectCard
 [-] Render all the project.
 [-] create projects route
-
-- write required types for this.
+[-] Drawer implementation
 
 - revisit the models. Fix them.
 - Write the core types. Means - types for all the collections.
 - Make a footer.
 - Make a Not found page.
 - Add a property - **projectType** - in project - **case study**, **project**, **learn** - to be used in projectCard footer.
+
+- For the Create ProjectForm analyze a open source project to learn how they implement a robust form component. with validation and stuff.
 
 # TASKS - NEXT SESSION OR THIS SESSION
 
@@ -37,6 +38,11 @@ Or any other analytical showoff able widget.
 Delete thumbnail as a separate image. Make the first image of the gallery the thumbnail
 When you take the input for image a let user upload multiple file in a input box and reorder them. So it becomes easier.
 The first image will be used as the thumbnail will be shown as a message there.
+
+---
+
+**Two option of adding new project - _started_ or _complete_**
+you can keep two choices. Either a complete project or a project that i just started. In this case i won't have many detailed info about it. So i have to make some features optional. A checkbox to opt into that mode.
 
 ---
 
