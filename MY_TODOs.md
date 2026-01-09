@@ -41,6 +41,11 @@ The first image will be used as the thumbnail will be shown as a message there.
 
 ---
 
+**Two option of adding new project - _started_ or _complete_**
+you can keep two choices. Either a complete project or a project that i just started. In this case i won't have many detailed info about it. So i have to make some features optional. A checkbox to opt into that mode.
+
+---
+
 # FUTURE PLANS
 
 - I will have count which shows how many projects are in this directory.
