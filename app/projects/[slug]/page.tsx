@@ -11,6 +11,7 @@ import ProjectActions from "@/components/projects/ProjectActions";
 // import { ProjectActions } from "@/components/projects/ProjectActions";
 
 // TODO: Work on the markdown-preview
+// TODO: Polish this component
 
 interface PageProps {
   params: Promise<{ slug: string }>;

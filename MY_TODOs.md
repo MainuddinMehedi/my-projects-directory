@@ -4,14 +4,15 @@
 [-] Complete the projectCard
 [-] Render all the project.
 [-] create projects route
-
-- write required types for this.
+[-] Drawer implementation
 
 - revisit the models. Fix them.
 - Write the core types. Means - types for all the collections.
 - Make a footer.
 - Make a Not found page.
 - Add a property - **projectType** - in project - **case study**, **project**, **learn** - to be used in projectCard footer.
+
+- For the Create ProjectForm analyze a open source project to learn how they implement a robust form component. with validation and stuff.
 
 # TASKS - NEXT SESSION OR THIS SESSION
 
