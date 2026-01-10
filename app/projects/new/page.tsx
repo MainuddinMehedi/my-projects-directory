@@ -6,7 +6,7 @@ import Link from "next/link";
 export default function NewProjectPage() {
   return (
     <div className=" flex justify-center">
-      <div className="container border py-10">
+      <div className="container py-10">
         <Link
           href="/"
           className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-6"

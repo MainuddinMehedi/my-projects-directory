@@ -70,7 +70,8 @@ body {
   --background: oklch(91.48% 0.00685 67.4);
   --foreground: oklch(35.373% 0.04383 206.86);
 
-  --card: oklch(91.48% 0.00685 67.4);
+  /* --card: oklch(91.48% 0.00685 67.4); */
+  --card: oklch(94.08% 0.00685 67.4);
   --card-foreground: oklch(35.373% 0.04383 206.86);
   --popover: oklch(91.48% 0.00685 67.4);
   --popover-foreground: oklch(35.373% 0.04383 206.86);
