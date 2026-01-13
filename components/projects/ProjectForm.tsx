@@ -16,16 +16,22 @@ import {
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
+import BadgeInput from "../BadgeInput";
+import MarkdownEditor from "../MarkdownEditor";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { generateSlug } from "@/utils/generateSlug";
 
 // TODO: you can keep two choices. either a complete project or a project that i just started. in this case i won't have many detailed info about it. So i have to make some features optional. a checkbox to opt into that mode.
 
-const MAX_FILE_SIZE = 5000000; // 5MB
-const ACCEPTED_IMAGE_TYPES = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-];
+// This will be used when figure out how i'm gonna make the image upload work. For now i will use url of a already uploaded photo.
+// const MAX_FILE_SIZE = 5000000; // 5MB
+// const ACCEPTED_IMAGE_TYPES = [
+//   "image/jpeg",
+//   "image/jpg",
+//   "image/png",
+//   "image/webp",
+// ];
 
 // This schema should be based on mongoose model as i will be adding project according to these two schema.
 // This schema to validate the client side and mongoose model is to validate the server side. or before saving it in the database.
@@ -39,13 +45,14 @@ const formSchema = z.object({
     .max(500, {
       message: "Description must be within 500 characters.",
     }),
-  thumbnail: z
-    .instanceof(File, { message: "Thumbnail is required" })
-    .refine((file) => file.size <= MAX_FILE_SIZE, `Max image size is 5MB.`)
-    .refine(
-      (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
-      "Only .jpg, .jpeg, .png and .webp formats are supported.",
-    ),
+  thumbnail: z.string(),
+  // thumbnail: z
+  //   .instanceof(File, { message: "Thumbnail is required" })
+  //   .refine((file) => file.size <= MAX_FILE_SIZE, `Max image size is 5MB.`)
+  //   .refine(
+  //     (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
+  //     "Only .jpg, .jpeg, .png and .webp formats are supported.",
+  //   ),
   gallery: z.string().optional(),
   repoLink: z.string().url({ message: "Please enter a valid url" }),
   siteUrl: z.string().optional(),
@@ -65,6 +72,9 @@ const formSchema = z.object({
 });
 
 export default function ProjectForm() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
   const {
     control,
     handleSubmit,
@@ -89,8 +99,40 @@ export default function ProjectForm() {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log("Form Data: ", data);
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    setLoading(true);
+
+    try {
+      let slug = generateSlug(data.pname);
+
+      const payload = {
+        ...data,
+        slug,
+        gallery: data.gallery
+          ? data.gallery.split(",").map((url) => ({ url: url.trim() }))
+          : [],
+        devPhase: {
+          status: data.devStatus,
+          startDate: data.startDate,
+          endDate: data.endDate,
+        },
+      };
+
+      const url = "/api/projects";
+      const method = "POST";
+
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -146,8 +188,9 @@ export default function ProjectForm() {
               <Label>Thumbnail Image</Label>
               <Input
                 {...field}
-                type="file"
+                // type="file"
                 id="thumbnail"
+                placeholder="/projects/image.jpg"
                 aria-invalid={fieldState.invalid}
               />
               <FieldDescription>
@@ -165,12 +208,19 @@ export default function ProjectForm() {
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <Label>Gallery URLs</Label>
-              <Input
-                {...field}
-                type="file"
-                id="gallery"
-                aria-invalid={fieldState.invalid}
+              <BadgeInput
+                value={field.value || ""}
+                onChange={field.onChange}
+                placeholder="url1, url2, url3"
               />
+
+              {/* <Input */}
+              {/*   {...field} */}
+              {/*   // type="file" */}
+              {/*   id="gallery" */}
+              {/*   placeholder="url1, url2, url3" */}
+              {/*   aria-invalid={fieldState.invalid} */}
+              {/* /> */}
               <FieldDescription>Upload multiple images</FieldDescription>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -216,82 +266,79 @@ export default function ProjectForm() {
       </FieldGroup>
 
       {/* Tags, tech, and devPhase */}
-      {/* TODO: make tagInput */}
       {/* TODO: Calender implementation */}
       <FieldGroup className="border p-3 py-5 rounded-md mb-7">
-        <div className="flex gap-2">
-          <Controller
-            name="tags"
-            control={control}
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <Label>Tags</Label>
-                <Input
-                  {...field}
-                  id="tags"
-                  aria-invalid={fieldState.invalid}
-                  placeholder="Relevant tags"
-                />
-                <FieldDescription>
-                  General tags for categorization
-                </FieldDescription>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
-          />
+        <h3 className="text-lg font-semibold">Development Details</h3>
 
-          <Controller
-            name="technologies"
-            control={control}
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <Label>Technologies</Label>
-                <Input
-                  {...field}
-                  id="technologies"
-                  aria-invalid={fieldState.invalid}
-                  placeholder="Relevant technologies"
-                />
-                <FieldDescription>
-                  Technologies used in this project.
-                </FieldDescription>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
-          />
-        </div>
-
-        {/* TODO: Revalidate select implementation */}
         <Controller
-          name="devStatus"
+          name="tags"
           control={control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <Label>Status of the project</Label>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="Planned">Planned</SelectItem>
-                    <SelectItem value="In Progress">In Progress</SelectItem>
-                    <SelectItem value="Completed">Completed</SelectItem>
-                    <SelectItem value="On Hold">On Hold</SelectItem>
-                    <SelectItem value="Abandoned">Abandoned</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+              <Label>Tags</Label>
+              <BadgeInput
+                placeholder="Type and press Enter (e.g. Web App, Open Source)"
+                value={field.value || ""}
+                onChange={field.onChange}
+              />
+
+              <FieldDescription>
+                General tags for categorization
+              </FieldDescription>
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+
+        <Controller
+          name="technologies"
+          control={control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <Label>Technologies</Label>
+              <BadgeInput
+                value={field.value || ""}
+                placeholder="Type and press Enter (e.g. React, Next.js)"
+                onChange={field.onChange}
+              />
+              <FieldDescription>
+                Technologies used in this project.
+              </FieldDescription>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
 
         <div className="flex gap-2">
+          <Controller
+            name="devStatus"
+            control={control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <Label>Status of the project</Label>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="Planned">Planned</SelectItem>
+                      <SelectItem value="In Progress">In Progress</SelectItem>
+                      <SelectItem value="Completed">Completed</SelectItem>
+                      <SelectItem value="On Hold">On Hold</SelectItem>
+                      <SelectItem value="Abandoned">Abandoned</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
           <Controller
             name="startDate"
             control={control}
@@ -348,28 +395,22 @@ export default function ProjectForm() {
             />
 
             <FieldDescription>
-              Any difficulties faced that you wanna mention for later.
+              Any difficulties faced that you wanna mention for later. Jot them
+              down here and write about it in the details section.
             </FieldDescription>
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
       />
 
-      {/* details - */}
-      {/* TODO: it will be a markdown editor */}
+      {/* details */}
       <Controller
         name="details"
         control={control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
             <Label>Project Details</Label>
-            <Input
-              {...field}
-              id="details"
-              aria-invalid={fieldState.invalid}
-              placeholder="Detailed description of the project."
-            />
-            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            <MarkdownEditor value={field.value} onChange={field.onChange} />
           </Field>
         )}
       />
