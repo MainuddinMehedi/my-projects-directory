@@ -7,10 +7,8 @@ import BadgeDrawer from "@/components/BadgeDrawer";
 import { getProjectBySlug } from "@/queries/project";
 import Image from "next/image";
 import ProjectActions from "@/components/projects/ProjectActions";
-// import { MarkdownPreview } from "@/components/ui/markdown-preview";
-// import { ProjectActions } from "@/components/projects/ProjectActions";
+import MarkdownPreview from "@/components/MarkdownPreview";
 
-// TODO: Work on the markdown-preview
 // TODO: Polish this component
 
 interface PageProps {
@@ -40,7 +38,7 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                {project.name}
+                {project.pname}
               </h1>
               {project.devPhase?.status && (
                 <Badge variant="outline" className="text-sm px-3 py-1">
@@ -57,24 +55,24 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
           <div className="flex gap-3">
             {project.repoLink && (
               <Button variant="outline" size="sm" asChild>
-                <a
+                <Link
                   href={project.repoLink}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <Github className="mr-2 h-4 w-4" /> Repo
-                </a>
+                </Link>
               </Button>
             )}
-            {project.demoLink && (
+            {project.siteUrl && (
               <Button size="sm" asChild>
-                <a
-                  href={project.demoLink}
+                <Link
+                  href={project.siteUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <ExternalLink className="mr-2 h-4 w-4" /> Live Demo
-                </a>
+                  <ExternalLink className="mr-2 h-4 w-4" /> Live Site
+                </Link>
               </Button>
             )}
             <ProjectActions
@@ -94,7 +92,7 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
             <div className="relative w-full h-122.5 rounded-xl overflow-hidden border border-border shadow-md">
               <Image
                 src={project.thumbnail}
-                alt={project.name}
+                alt={project.pname}
                 fill
                 className="object-cover"
               />
@@ -102,47 +100,47 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
           )}
 
           {/* Overview / Problem Statement (Markdown placeholder) */}
-          {(project.overview || project.problemStatement) && (
+          {(project.details || project.problemStatement) && (
             <div className="prose dark:prose-invert max-w-none">
-              {project.overview && (
+              {project.details && (
                 <section>
                   <h2 className="flex items-center gap-2 text-2xl font-bold mb-4">
                     <Layers className="w-6 h-6 text-primary" />
                     Project Details
                   </h2>
                   <div className="opacity-90">
-                    {/* <MarkdownPreview source={project.overview} /> */}
+                    <MarkdownPreview source={project.details} />
                   </div>
                 </section>
               )}
 
               {/* Challenges Section */}
-              {project.challenges?.length > 0 && (
-                <section className="mt-12">
-                  <h2>Challenges & Solutions</h2>
-                  <div className="grid gap-6">
-                    {project.challenges.map((challenge: any, idx: number) => (
-                      <div
-                        key={idx}
-                        className="bg-card/50 border rounded-lg p-6"
-                      >
-                        <h3 className="text-lg font-bold mb-2 text-red-400">
-                          Problem: {challenge.title}
-                        </h3>
-                        <p className="mb-4 text-muted-foreground">
-                          {challenge.description}
-                        </p>
-                        <div className="pl-4 border-l-2 border-green-500/50">
-                          <h4 className="font-semibold text-green-400 text-sm mb-1">
-                            Solution
-                          </h4>
-                          <p>{challenge.solution}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              )}
+              {/* {project.challenges?.length > 0 && ( */}
+              {/*   <section className="mt-12"> */}
+              {/*     <h2>Challenges & Solutions</h2> */}
+              {/*     <div className="grid gap-6"> */}
+              {/*       {project.challenges.map((challenge: any, idx: number) => ( */}
+              {/*         <div */}
+              {/*           key={idx} */}
+              {/*           className="bg-card/50 border rounded-lg p-6" */}
+              {/*         > */}
+              {/*           <h3 className="text-lg font-bold mb-2 text-red-400"> */}
+              {/*             Problem: {challenge.title} */}
+              {/*           </h3> */}
+              {/*           <p className="mb-4 text-muted-foreground"> */}
+              {/*             {challenge.description} */}
+              {/*           </p> */}
+              {/*           <div className="pl-4 border-l-2 border-green-500/50"> */}
+              {/*             <h4 className="font-semibold text-green-400 text-sm mb-1"> */}
+              {/*               Solution */}
+              {/*             </h4> */}
+              {/*             <p>{challenge.solution}</p> */}
+              {/*           </div> */}
+              {/*         </div> */}
+              {/*       ))} */}
+              {/*     </div> */}
+              {/*   </section> */}
+              {/* )} */}
             </div>
           )}
         </div>
@@ -156,7 +154,7 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
             </h3>
             <div className="flex flex-wrap gap-2">
               {project.technologies?.map((tech: any) => (
-                <BadgeDrawer key={tech._id} tech={tech} />
+                <BadgeDrawer key={tech._id} triggerElm={tech} type="tech" />
               ))}
             </div>
           </div>
@@ -169,9 +167,7 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
               </h3>
               <div className="flex flex-wrap gap-2">
                 {project.tags.map((tag: any) => (
-                  <Badge key={tag._id} variant="secondary">
-                    {tag.name}
-                  </Badge>
+                  <BadgeDrawer key={tag._id} triggerElm={tag} type="tag" />
                 ))}
               </div>
             </div>
@@ -201,7 +197,7 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
           </div>
 
           {/* Config Snippets */}
-          {project.relatedConfigs?.length > 0 && (
+          {/* {project.relatedConfigs?.length > 0 && (
             <div className="bg-card/30 rounded-xl p-6 border">
               <h3 className="font-semibold mb-4">Saved Configs</h3>
               <div className="space-y-4">
@@ -217,7 +213,7 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
                 ))}
               </div>
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </article>

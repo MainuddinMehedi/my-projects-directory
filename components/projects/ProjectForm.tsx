@@ -21,8 +21,14 @@ import MarkdownEditor from "../MarkdownEditor";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { generateSlug } from "@/utils/generateSlug";
+import { toast } from "sonner";
+import { IProject } from "@/types";
 
-// TODO: you can keep two choices. either a complete project or a project that i just started. in this case i won't have many detailed info about it. So i have to make some features optional. a checkbox to opt into that mode.
+// IProject
+
+interface ProjectFormProps {
+  initialData?: any;
+}
 
 // This will be used when figure out how i'm gonna make the image upload work. For now i will use url of a already uploaded photo.
 // const MAX_FILE_SIZE = 5000000; // 5MB
@@ -45,7 +51,7 @@ const formSchema = z.object({
     .max(500, {
       message: "Description must be within 500 characters.",
     }),
-  thumbnail: z.string(),
+  thumbnail: z.string().url({ message: "Please enter a valid url" }),
   // thumbnail: z
   //   .instanceof(File, { message: "Thumbnail is required" })
   //   .refine((file) => file.size <= MAX_FILE_SIZE, `Max image size is 5MB.`)
@@ -54,10 +60,12 @@ const formSchema = z.object({
   //     "Only .jpg, .jpeg, .png and .webp formats are supported.",
   //   ),
   gallery: z.string().optional(),
-  repoLink: z.string().url({ message: "Please enter a valid url" }),
+  repoLink: z.string().url({ message: "Please enter a valid url" }).optional(),
   siteUrl: z.string().optional(),
+  technologies: z
+    .string()
+    .min(1, { message: "Please list technologies used(add at least 1)" }),
   tags: z.string().optional(),
-  technologies: z.string().min(1, { message: "Please list technologies used" }),
   details: z.string().optional(),
   problemStatement: z.string().optional(),
   devStatus: z.enum([
@@ -71,9 +79,41 @@ const formSchema = z.object({
   endDate: z.string().optional(),
 });
 
-export default function ProjectForm() {
+export default function ProjectForm({ initialData }: ProjectFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+
+  const defaultValues = initialData
+    ? {
+        ...initialData,
+        gallery: initialData.gallery?.map((img) => img.url).join(", "),
+        technologies: initialData.technologies
+          ?.map((tech) => tech.name)
+          .join(", "),
+        tags: initialData.tags?.map((tag) => tag.name).join(", "),
+        devStatus: initialData.devPhase?.status || "In Progress",
+        startDate: initialData.devPhase?.startDate
+          ? new Date(initialData.devPhase.startDate).toISOString().split("T")[0]
+          : "",
+        endDate: initialData.devPhase?.endDate
+          ? new Date(initialData.devPhase.endDate).toISOString().split("T")[0]
+          : "",
+      }
+    : {
+        pname: "",
+        description: "",
+        thumbnail: "",
+        gallery: "",
+        repoLink: "",
+        siteUrl: "",
+        tags: "",
+        technologies: "",
+        details: "",
+        problemStatement: "",
+        devStatus: "In Progress",
+        startDate: "",
+        endDate: "",
+      };
 
   const {
     control,
@@ -82,28 +122,14 @@ export default function ProjectForm() {
   } = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: "onTouched",
-    defaultValues: {
-      pname: "",
-      description: "",
-      thumbnail: "",
-      gallery: "",
-      repoLink: "",
-      siteUrl: "",
-      tags: "",
-      technologies: "",
-      details: "",
-      problemStatement: "",
-      devStatus: "In Progress",
-      startDate: "",
-      endDate: "",
-    },
+    defaultValues,
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setLoading(true);
 
     try {
-      let slug = generateSlug(data.pname);
+      const slug = generateSlug(data.pname);
 
       const payload = {
         ...data,
@@ -118,8 +144,10 @@ export default function ProjectForm() {
         },
       };
 
-      const url = "/api/projects";
-      const method = "POST";
+      const url = initialData
+        ? `/api/projects/${initialData._id}`
+        : "/api/projects";
+      const method = initialData ? "PUT" : "POST";
 
       const response = await fetch(url, {
         method: method,
@@ -129,9 +157,21 @@ export default function ProjectForm() {
         body: JSON.stringify(payload),
       });
 
-      console.log(response);
-    } catch (error) {
+      const createdData = await response.json();
+
+      console.log("response from projectForm component: ", createdData);
+      if (!response.ok) {
+        toast.error("Failed to create project");
+        throw new Error(data.details || "Failed to create project");
+      }
+
+      router.push(`/projects?new=${createdData.slug}`);
+      router.refresh();
+    } catch (error: any) {
       console.log(error);
+      toast.error(`Error detected: ${error.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -170,7 +210,7 @@ export default function ProjectForm() {
                 id="description"
                 aria-invalid={fieldState.invalid}
                 placeholder="Brief summary..."
-                autoComplete="off"
+                // autoComplete="off"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -271,6 +311,25 @@ export default function ProjectForm() {
         <h3 className="text-lg font-semibold">Development Details</h3>
 
         <Controller
+          name="technologies"
+          control={control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <Label>Technologies</Label>
+              <BadgeInput
+                value={field.value || ""}
+                placeholder="Type and press Enter (e.g. React, Next.js)"
+                onChange={field.onChange}
+              />
+              <FieldDescription>
+                Technologies used in this project.
+              </FieldDescription>
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+
+        <Controller
           name="tags"
           control={control}
           render={({ field, fieldState }) => (
@@ -284,25 +343,6 @@ export default function ProjectForm() {
 
               <FieldDescription>
                 General tags for categorization
-              </FieldDescription>
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-
-        <Controller
-          name="technologies"
-          control={control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <Label>Technologies</Label>
-              <BadgeInput
-                value={field.value || ""}
-                placeholder="Type and press Enter (e.g. React, Next.js)"
-                onChange={field.onChange}
-              />
-              <FieldDescription>
-                Technologies used in this project.
               </FieldDescription>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -415,17 +455,17 @@ export default function ProjectForm() {
         )}
       />
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Creating..." : "Create project"}
-      </Button>
-
       {/* <Button type="submit" disabled={isSubmitting}> */}
-      {/*   {isSubmitting */}
-      {/*     ? "Saving..." */}
-      {/*     : initialData */}
-      {/*       ? "Update Project" */}
-      {/*       : "Create Project"} */}
+      {/*   {isSubmitting ? "Creating..." : "Create project"} */}
       {/* </Button> */}
+
+      <Button type="submit" disabled={isSubmitting}>
+        {isSubmitting
+          ? "Saving..."
+          : initialData
+            ? "Update Project"
+            : "Create Project"}
+      </Button>
     </form>
   );
 }

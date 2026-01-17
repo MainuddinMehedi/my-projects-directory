@@ -5,6 +5,7 @@ import { Input } from "./ui/input";
 import { Badge } from "./ui/badge";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface BadgeInputProps {
   value: string;
@@ -12,6 +13,9 @@ interface BadgeInputProps {
   placeholder?: string;
   className?: string;
 }
+
+// When i add the same thing multiple times it actually adds it first and then it deletes it as it is already in the list(in the array i mean).
+// TODO: So i have to add a message saying it is already added add a new one.
 
 export default function BadgeInput({
   value,
@@ -36,6 +40,8 @@ export default function BadgeInput({
       const newTags = [...tags, trimmed];
 
       onChange(newTags.join(", "));
+    } else {
+      toast.error("Add a new one. it is already in the list.");
     }
     setInputValue("");
   };
@@ -79,7 +85,7 @@ export default function BadgeInput({
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         onKeyDown={handleKeyDown}
-        // learn why would you use onBlur
+        // TODO: learn why would you use onBlur
         onBlur={() => inputValue.trim() && addTag(inputValue)}
         placeholder={tags.length === 0 ? placeholder : ""}
         className="flex-1 min-w-30 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-1 py-0 h-auto bg-transparent placeholder:text-muted-foreground"

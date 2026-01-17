@@ -15,7 +15,7 @@ export default function ThemeSwitcher() {
 
   if (!mounted) return null;
 
-  const currentTheme = theme === "system" ? systemTheme ?? "light" : theme;
+  const currentTheme = theme === "system" ? (systemTheme ?? "light") : theme;
   const isDark = currentTheme === "dark";
 
   const toggleTheme = () => {
@@ -31,7 +31,8 @@ export default function ThemeSwitcher() {
         aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
         aria-live="polite"
         onClick={toggleTheme}
-        className={`py-6! px-4! rounded-full shadow-lg`}
+        size={"icon-lg"}
+        className={`py-6.5! px-6.5! rounded-full shadow-lg transition-transform hover:scale-110 cursor-pointer`}
       >
         <MoonIcon
           className={`${isDark ? "" : "hidden"}`}

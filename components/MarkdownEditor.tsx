@@ -1,5 +1,5 @@
 import MDEditor from "@uiw/react-md-editor";
-import rehypeSanitize from "rehype-sanitize";
+// import rehypeSanitize from "rehype-sanitize";
 
 interface MarkdownEditorProps {
   value?: string;
@@ -15,9 +15,9 @@ export default function MarkdownEditor({
       <MDEditor
         value={value}
         onChange={onChange}
-        previewOptions={{
-          rehypePlugins: [[rehypeSanitize]],
-        }}
+        // previewOptions={{
+        //   rehypePlugins: [[rehypeSanitize]],
+        // }}
         // className="bg-card!"
       />
     </div>

@@ -44,7 +44,7 @@ export async function getProjectsByTech(techId: string) {
   await dbConnect();
 
   const projects = await Project.find({ technologies: techId })
-    .select("name slug thumbnail devPhase")
+    .select("pname slug thumbnail devPhase")
     .sort({ "devPhase.startDate": -1 })
     .lean();
 

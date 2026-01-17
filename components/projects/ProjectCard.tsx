@@ -1,5 +1,9 @@
+import { cn } from "@/lib/utils";
 import { Calendar, ImageIcon, Layers } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import BadgeDrawer from "../BadgeDrawer";
+import { Badge } from "../ui/badge";
 import {
   Card,
   CardDescription,
@@ -7,10 +11,6 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { Badge } from "../ui/badge";
-import Link from "next/link";
-import BadgeDrawer from "../BadgeDrawer";
-import { cn } from "@/lib/utils";
 
 // TODO: project will have type. it will be shown in place of case study. projects may have types like - case study, project, learning, fun
 
@@ -22,7 +22,7 @@ interface Technology {
 
 interface ProjectProps {
   project: {
-    name: string;
+    pname: string;
     slug: string;
     description: string;
     thumbnail?: string;
@@ -38,7 +38,7 @@ interface ProjectProps {
 export default function ProjectCard({
   project,
   isNew,
-}: ProjectProps & { isNew: boolean }) {
+}: ProjectProps & { isNew?: boolean }) {
   return (
     <Card
       className={cn(
@@ -54,7 +54,7 @@ export default function ProjectCard({
           {project.thumbnail ? (
             <Image
               src={project.thumbnail}
-              alt={project.name}
+              alt={project.pname || "Project thumbnail"}
               fill
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
@@ -69,7 +69,7 @@ export default function ProjectCard({
       <CardHeader>
         <div className="flex justify-between items-start gap-4">
           <CardTitle className="bg-linear-to-r from-foreground to-foreground/70 bg-clip-text group-hover:text-primary transition-colors">
-            {project.name}
+            {project.pname}
           </CardTitle>
 
           {project.devPhase?.status && (
@@ -88,7 +88,12 @@ export default function ProjectCard({
         {/* Technologies */}
         <div className="flex flex-wrap gap-2">
           {project.technologies?.slice(0, 3).map((tech: any) => (
-            <BadgeDrawer key={tech._id} tech={tech} fromCard />
+            <BadgeDrawer
+              key={tech._id}
+              triggerElm={tech}
+              type="tech"
+              fromCard
+            />
           ))}
 
           {project.technologies?.length > 3 && (

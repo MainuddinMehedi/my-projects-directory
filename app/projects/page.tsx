@@ -34,8 +34,8 @@ export default async function ProjectsPage({
           All Projects
         </h1>
         <p className="text-muted-foreground text-lg max-w-2xl">
-          A collection of {projects.length} repositories including open source
-          libraries, experiments, and learning exercises.
+          A collection of {projects.length} projects including personal
+          projects, experiments, and learning exercises.
         </p>
       </div>
 

@@ -29,24 +29,24 @@ export interface IDevPhase {
 
 // Main Project Interface
 export interface IProject {
-  name: string;
+  pname: string;
   slug: string;
   description: string;
-  thumbnail?: string;
+  thumbnail: string;
   gallery: IGalleryItem[];
   repoLink?: string;
   demoLink?: string;
 
   // Relationships using ObjectIds
   technologies: Types.ObjectId[];
-  tags: Types.ObjectId[];
+  tags?: Types.ObjectId[];
 
   // Knowledge Base
-  overview?: string;
+  details?: string;
   problemStatement?: string;
-  challenges: IChallenge[];
-  lessonsLearned: string[];
-  relatedConfigs: IRelatedConfig[];
+  // challenges: IChallenge[];
+  // lessonsLearned: string[];
+  // relatedConfigs: IRelatedConfig[];
 
   // Phase & Timestamps
   devPhase: IDevPhase;
