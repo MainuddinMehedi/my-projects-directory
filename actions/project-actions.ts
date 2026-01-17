@@ -1,6 +1,6 @@
 "use server";
 
-import { Project } from "@/models";
+import { Project, Tag, Technology } from "@/models";
 import { dbConnect } from "@/service/mongo";
 import { prepareProjectData } from "@/services/project-service";
 import { generateSlug } from "@/utils/generateSlug";
@@ -132,5 +132,23 @@ export async function updateProjectAction(
       success: false,
       message: error.message || "Failed to update project",
     };
+  }
+}
+
+export async function getAvailableTagsAndTechnologies() {
+  try {
+    await dbConnect();
+    const technologies = await Technology.find({})
+      .sort({ name: 1 })
+      .select("name");
+    const tags = await Tag.find({}).sort({ name: 1 }).select("name");
+
+    return {
+      technologies: technologies.map((t) => t.name),
+      tags: tags.map((t) => t.name),
+    };
+  } catch (error) {
+    console.error("Error fetching tags/techs:", error);
+    return { technologies: [], tags: [] };
   }
 }

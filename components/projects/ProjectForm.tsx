@@ -29,6 +29,8 @@ import {
 
 interface ProjectFormProps {
   initialData?: any;
+  availableTags?: string[];
+  availableTechnologies?: string[];
 }
 
 // This will be used when figure out how i'm gonna make the image upload work. For now i will use url of a already uploaded photo.
@@ -80,7 +82,11 @@ const formSchema = z.object({
   endDate: z.string().optional(),
 });
 
-export default function ProjectForm({ initialData }: ProjectFormProps) {
+export default function ProjectForm({
+  initialData,
+  availableTags = [],
+  availableTechnologies = [],
+}: ProjectFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -307,6 +313,7 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
                 value={field.value || ""}
                 placeholder="Type and press Enter (e.g. React, Next.js)"
                 onChange={field.onChange}
+                suggestions={availableTechnologies}
               />
               <FieldDescription>
                 Technologies used in this project.
@@ -326,6 +333,7 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
                 placeholder="Type and press Enter (e.g. Web App, Open Source)"
                 value={field.value || ""}
                 onChange={field.onChange}
+                suggestions={availableTags}
               />
 
               <FieldDescription>

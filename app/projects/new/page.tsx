@@ -3,7 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-export default function NewProjectPage() {
+import { getAvailableTagsAndTechnologies } from "@/actions/project-actions";
+
+export default async function NewProjectPage() {
+  const { tags, technologies } = await getAvailableTagsAndTechnologies();
+
   return (
     <div className=" flex justify-center">
       <div className="container py-10">
@@ -23,7 +27,10 @@ export default function NewProjectPage() {
           </CardHeader>
 
           <CardContent>
-            <ProjectForm />
+            <ProjectForm
+              availableTags={tags}
+              availableTechnologies={technologies}
+            />
           </CardContent>
         </Card>
       </div>

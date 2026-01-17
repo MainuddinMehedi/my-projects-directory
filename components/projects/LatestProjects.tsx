@@ -14,7 +14,7 @@ export default async function LatestProjects() {
 
         <div className="flex items-center gap-4">
           <Link
-            href={"/timeline"}
+            href={"/projects/timeline"}
             className="text-muted-foreground hover:text-primary transition-colors text-sm"
           >
             Timeline
