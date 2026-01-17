@@ -20,9 +20,12 @@ import BadgeInput from "../BadgeInput";
 import MarkdownEditor from "../MarkdownEditor";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { generateSlug } from "@/utils/generateSlug";
 import { toast } from "sonner";
 import { IProject } from "@/types";
+import {
+  createProjectAction,
+  updateProjectAction,
+} from "@/actions/project-actions";
 
 // IProject
 
@@ -129,44 +132,30 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
     setLoading(true);
 
     try {
-      const slug = generateSlug(data.pname);
+      let response;
 
-      const payload = {
-        ...data,
-        slug,
-        gallery: data.gallery
-          ? data.gallery.split(",").map((url) => ({ url: url.trim() }))
-          : [],
-        devPhase: {
-          status: data.devStatus,
-          startDate: data.startDate,
-          endDate: data.endDate,
-        },
-      };
-
-      const url = initialData
-        ? `/api/projects/${initialData._id}`
-        : "/api/projects";
-      const method = initialData ? "PUT" : "POST";
-
-      const response = await fetch(url, {
-        method: method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const createdData = await response.json();
-
-      console.log("response from projectForm component: ", createdData);
-      if (!response.ok) {
-        toast.error("Failed to create project");
-        throw new Error(data.details || "Failed to create project");
+      if (initialData) {
+        response = await updateProjectAction(initialData._id, data);
+      } else {
+        // Pass null as prevState
+        response = await createProjectAction(null, data);
       }
 
-      router.push(`/projects?new=${createdData.slug}`);
-      router.refresh();
+      console.log("response from projectForm component: ", response);
+
+      if (!response.success) {
+        toast.error(response.message || "Failed to save project");
+        // If there are field errors, we could map them to the form
+        // but for now just showing the message
+        throw new Error(response.message || "Failed to save project");
+      }
+
+      toast.success(response.message);
+
+      if (response.projectSlug) {
+        router.push(`/projects?new=${response.projectSlug}`);
+        router.refresh();
+      }
     } catch (error: any) {
       console.log(error);
       toast.error(`Error detected: ${error.message}`);
