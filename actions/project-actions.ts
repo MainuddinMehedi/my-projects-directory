@@ -105,27 +105,6 @@ export async function updateProjectAction(
       };
     }
 
-    // We don't regenerate slug on edit usually, or do we?
-    // The previous implementation DID regenerate slug from name on PUT if name changed.
-    // But usually changing slug breaks URLs.
-    // However, to match previous behavior:
-    // const slug = generateSlug(validatedFields.data.pname);
-    // Actually, explicit slug update wasn't clearly shown in the PUT route reading,
-    // wait, I read the PUT route. It did `const data = {...body}` and then `findByIdAndUpdate`.
-    // It did NOT regenerate the slug from the name.
-    // Wait, let me re-read the PUT route file.
-    // `app/api/projects/[id]/route.ts`:
-    // It checks technologies and tags.
-    // It does NOT doing `data.slug = ...`.
-    // So the slug remains whatever was passed in the body OR if not passed, it remains unchanged in DB.
-    // The frontend sends `...data` which includes `slug`.
-    // But `ProjectForm` onSubmit: `const slug = generateSlug(data.pname); ... payload = { ...data, slug, ...}`.
-    // So CLIENT was generating slug.
-    // In Server Action, WE should generate it if we want to update it.
-    // Let's stick to generating it to keep behavior consistent: name change -> slug change.
-
-    // BUT, changing slug redirects.
-    // Let's generate it.
     const slug = generateSlug(validatedFields.data.pname);
 
     const payload = await prepareProjectData({ ...validatedFields.data, slug });

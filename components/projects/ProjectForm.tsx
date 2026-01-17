@@ -27,8 +27,6 @@ import {
   updateProjectAction,
 } from "@/actions/project-actions";
 
-// IProject
-
 interface ProjectFormProps {
   initialData?: any;
 }
@@ -443,10 +441,6 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
           </Field>
         )}
       />
-
-      {/* <Button type="submit" disabled={isSubmitting}> */}
-      {/*   {isSubmitting ? "Creating..." : "Create project"} */}
-      {/* </Button> */}
 
       <Button type="submit" disabled={isSubmitting}>
         {isSubmitting
